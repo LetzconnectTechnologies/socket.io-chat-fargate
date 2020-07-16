@@ -7,6 +7,8 @@ var path = require('path');
 var enforce = require('express-sslify');
 var config = require('./lib/config');
 
+const os = require('os');
+
 var app = express();
 
 // GZIP compress resources served
@@ -58,6 +60,9 @@ io.on('connection', function(socket) {
     if (!data.message || !_.isString(data.message)) {
       return callback('Must pass a parameter `message` which is a string');
     }
+
+    console.log( os.hostname() );
+    console.log( "Message Recieved from "+socket.username );
 
     var messageBody = {
       room: data.room,
@@ -343,6 +348,10 @@ io.on('connection', function(socket) {
   socket.on('disconnect', function() {
     if (socket.authenticated) {
       Presence.remove(socket.id);
+
+	
+	console.log( os.hostname() );
+	console.log( "User left : "+ socket.username);
 
       Presence.list(function(users) {
         // echo globally (all clients) that a person has left
